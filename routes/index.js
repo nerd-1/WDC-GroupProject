@@ -3,6 +3,18 @@
 var express = require('express');
 var router = express.Router();
 
+// MariaDB
+const mariadb = require('mariadb');
+const pool = mariadb.createPool({
+  host: 'localhost',
+  port: '3306',
+  user:'user',
+  database: 'mydb',
+  // password: '',
+  connectionLimit: 5
+});
+
+
 //TODO: Update routes to meet the specs
 
 router.get('/', function(req, res) {
@@ -27,6 +39,32 @@ router.get('/booking-success', function(req, res) {
 
 router.get('/signup', function(req, res) {
   res.render('signup', req);
+});
+
+router.post('/signup/submit', function(req, res) {
+  console.log(req.body.email);
+  async function asyncFunction(req) {
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      const firstName = req.body.firstName;
+      const lastName = req.body.lastName;
+      const email = req.body.email;
+      const phone = req.body.phone;
+      const code = req.body.code;
+      var sql = "INSERT INTO Cust (firstName, lastName, email, phone, code) VALUES ('"+firstName+"', '"+lastName+"', '"+email+"', '"+phone+"', '"+code+"');";
+      console.log(sql);
+      const res = await conn.query(sql, [1, "mariadb"]);
+      console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+
+    } catch (err) {
+      throw err;
+    } finally {
+      if (conn) return conn.end();
+    }
+  }
+  asyncFunction(req);
+  res.render('account', req);
 });
 
 router.get('/login', function(req, res) {

@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS Cust (
   `lastName` VARCHAR(45) NULL,
   `email` VARCHAR(90) NULL,
   `phone` VARCHAR(20) NULL
+  `code` VARCHAR(20) NULL
   ) ENGINE = Aria;
 
 
